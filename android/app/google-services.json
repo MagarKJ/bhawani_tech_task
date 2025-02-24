@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "961278455564",
+    "project_id": "task-c4106",
+    "storage_bucket": "task-c4106.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961278455564:android:6cd1bb9242fcf755fc2329",
+        "android_client_info": {
+          "package_name": "com.example.bhawani_tech_task"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvIFMpgUMB0_FQrzlOOEOV5AggGCytHe8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

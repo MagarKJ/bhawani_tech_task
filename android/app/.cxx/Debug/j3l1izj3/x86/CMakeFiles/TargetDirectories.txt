@@ -1,0 +1,2 @@
+D:/flutter/bhawani_tech_task/android/app/.cxx/Debug/j3l1izj3/x86/CMakeFiles/edit_cache.dir
+D:/flutter/bhawani_tech_task/android/app/.cxx/Debug/j3l1izj3/x86/CMakeFiles/rebuild_cache.dir
