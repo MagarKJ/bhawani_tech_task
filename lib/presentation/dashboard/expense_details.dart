@@ -223,6 +223,7 @@ class _ExpenseDetailsPageState extends State<ExpenseDetailsPage> {
                                   UpdateExpenseStatus(
                                     expenseId: widget.expense.id ?? '',
                                     status: 'approved',
+                                    token: widget.expense.token,
                                   ),
                                 );
                               },
@@ -238,6 +239,7 @@ class _ExpenseDetailsPageState extends State<ExpenseDetailsPage> {
                                   UpdateExpenseStatus(
                                     expenseId: widget.expense.id ?? '',
                                     status: 'pending',
+                                    token: widget.expense.token,
                                   ),
                                 );
                               },
@@ -253,6 +255,7 @@ class _ExpenseDetailsPageState extends State<ExpenseDetailsPage> {
                                   UpdateExpenseStatus(
                                     expenseId: widget.expense.id ?? '',
                                     status: 'rejected',
+                                    token: widget.expense.token,
                                   ),
                                 );
                               },

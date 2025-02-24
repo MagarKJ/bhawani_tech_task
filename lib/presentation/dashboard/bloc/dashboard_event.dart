@@ -35,9 +35,11 @@ class FetchExpensesEvent extends DashboardEvent {
 class UpdateExpenseStatus extends DashboardEvent {
   final String expenseId;
   final String status;
+  final String token;
 
   UpdateExpenseStatus({
     required this.expenseId,
     required this.status,
+    required this.token,
   });
 }

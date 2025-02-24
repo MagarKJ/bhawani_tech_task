@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bhawani_tech_task/presentation/dashboard/home_page.dart';
 import 'package:bhawani_tech_task/presentation/dashboard/repo/add_image.dart';
 import 'package:bhawani_tech_task/presentation/dashboard/repo/expense_repod.dart';
+import 'package:bhawani_tech_task/presentation/notification/bloc/notification_bloc.dart';
 import 'package:bhawani_tech_task/user_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,6 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
             statusFilter: event.status ?? '',
           );
         } else if (role == 'admin') {
-          
           // Admins: Fetch all expenses and apply filters if available
           expenses = await expenseRepo.getUserExpenses(
             userId: '', // Admins see all expenses
@@ -70,6 +70,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
           expense: ExpensModel(
             name: name ?? 'User',
             userId: uid ?? '',
+            token: fcmToken,
             title: event.title,
             description: event.description,
             amount: event.amount,
@@ -101,9 +102,19 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       try {
         emit(DashboardLoading());
         ExpenseRepo expenseRepo = ExpenseRepo();
-        await expenseRepo.updateExpenseStatus(
+        await expenseRepo
+            .updateExpenseStatus(
           expenseId: event.expenseId,
           newStatus: event.status,
+        )
+            .then(
+          (value) {
+            BlocProvider.of<NotificationBloc>(Get.context!)
+                .add(StatusChangeEvent(
+              status: event.status,
+              reciverToken: event.token,
+            ));
+          },
         );
         Fluttertoast.showToast(
           msg: 'Expense status updated successfully',

@@ -1,0 +1,2 @@
+D:/flutter/bhawani_tech_task/android/app/.cxx/RelWithDebInfo/6l1f3p28/armeabi-v7a/CMakeFiles/edit_cache.dir
+D:/flutter/bhawani_tech_task/android/app/.cxx/RelWithDebInfo/6l1f3p28/armeabi-v7a/CMakeFiles/rebuild_cache.dir

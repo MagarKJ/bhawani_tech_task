@@ -3,9 +3,12 @@ import 'dart:developer';
 import 'package:bhawani_tech_task/presentation/dashboard/add_expense_page.dart';
 import 'package:bhawani_tech_task/presentation/dashboard/expense_details.dart';
 import 'package:bhawani_tech_task/presentation/dashboard/report/report_page.dart';
+import 'package:bhawani_tech_task/presentation/notification/notification_repo.dart';
+import 'package:bhawani_tech_task/services/notification_serices.dart';
 import 'package:bhawani_tech_task/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,6 +40,7 @@ class _HomePageState extends State<HomePage> {
       email = prefs.getString('email') ?? '';
       role = prefs.getString('role') ?? '';
       uid = prefs.getString('uid') ?? '';
+      fcmToken = prefs.getString('playerId') ?? '';
     });
     log('user id yo ho $uid');
   }
@@ -210,13 +214,16 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
-        leading: IconButton(
-          onPressed: () {
-            //show dialog box with filter options
-            _filterDialogBox();
-          },
-          icon: const Icon(Icons.filter_alt_sharp),
-        ),
+        centerTitle: true,
+        leading: role == 'employee'
+            ? SizedBox.shrink()
+            : IconButton(
+                onPressed: () {
+                  //show dialog box with filter options
+                  _filterDialogBox();
+                },
+                icon: const Icon(Icons.filter_alt_sharp),
+              ),
         title: Text('${role.toString().capitalizeFirst} Dashboard'),
         actions: [
           IconButton(
@@ -361,6 +368,15 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
+          TextButton(
+            onPressed: () async {
+              bool gayo = await SendNotification()
+                  .sendNotification(reciverToken: fcmToken, status: 'accepted');
+
+              log('$gayo');
+            },
+            child: Text('data'),
+          )
         ],
       ),
     );

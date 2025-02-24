@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ExpensModel {
   String? id; // Document ID in Firestore (optional)
   String name;
+  String token;
   String userId; // The user who submitted the expense
   String title;
   String description;
@@ -14,6 +15,7 @@ class ExpensModel {
   ExpensModel({
     this.id,
     required this.name,
+    required this.token,
     required this.userId,
     required this.title,
     required this.description,
@@ -28,6 +30,7 @@ class ExpensModel {
     return {
       'name': name,
       'userId': userId,
+      'token': token,
       'title': title,
       'description': description,
       'amount': amount,
@@ -44,6 +47,7 @@ class ExpensModel {
     return ExpensModel(
       id: doc.id, // Assign Firestore document ID
       name: data['name'] ?? '',
+      token: data['token'] ?? '',
       userId: data['userId'] ?? '',
       title: data['title'] ?? '',
       description: data['description'] ?? '',
