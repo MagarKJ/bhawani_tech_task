@@ -1,5 +1,5 @@
-import 'package:bhawani_tech_task/presentation/dashboard/add_expense_page.dart';
-import 'package:bhawani_tech_task/presentation/dashboard/bloc/dashboard_bloc.dart';
+import 'package:bhawani_tech_task/features/homepage/presentation/dashboard/add_expense_page.dart';
+import 'package:bhawani_tech_task/features/homepage/presentation/dashboard/bloc/dashboard_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';

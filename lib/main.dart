@@ -1,15 +1,15 @@
 import 'dart:developer';
 
-import 'package:bhawani_tech_task/presentation/auth/login/bloc/login_bloc.dart';
-import 'package:bhawani_tech_task/presentation/auth/register/bloc/register_bloc.dart';
-import 'package:bhawani_tech_task/presentation/auth/login/login.dart';
+import 'package:bhawani_tech_task/features/auth/presentation/login/bloc/login_bloc.dart';
+import 'package:bhawani_tech_task/features/auth/presentation/register/bloc/register_bloc.dart';
+import 'package:bhawani_tech_task/features/auth/presentation/login/login.dart';
 import 'package:bhawani_tech_task/firebase_options.dart';
-import 'package:bhawani_tech_task/presentation/dashboard/bloc/dashboard_bloc.dart';
-import 'package:bhawani_tech_task/presentation/dashboard/report/bloc/report_bloc.dart';
-import 'package:bhawani_tech_task/presentation/notification/bloc/notification_bloc.dart';
-import 'package:bhawani_tech_task/services/internet_services.dart';
-import 'package:bhawani_tech_task/services/notification_serices.dart';
-import 'package:bhawani_tech_task/services/sqlite_helper.dart';
+import 'package:bhawani_tech_task/features/homepage/presentation/dashboard/bloc/dashboard_bloc.dart';
+import 'package:bhawani_tech_task/features/homepage/presentation/report/bloc/report_bloc.dart';
+import 'package:bhawani_tech_task/features/notification/bloc/notification_bloc.dart';
+import 'package:bhawani_tech_task/core/internet_services.dart';
+import 'package:bhawani_tech_task/features/notification/repo/notification_serices.dart';
+import 'package:bhawani_tech_task/features/notification/repo/sqlite_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
