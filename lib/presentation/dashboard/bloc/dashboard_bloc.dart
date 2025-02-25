@@ -5,6 +5,7 @@ import 'package:bhawani_tech_task/presentation/dashboard/home_page.dart';
 import 'package:bhawani_tech_task/presentation/dashboard/repo/add_image.dart';
 import 'package:bhawani_tech_task/presentation/dashboard/repo/expense_repod.dart';
 import 'package:bhawani_tech_task/presentation/notification/bloc/notification_bloc.dart';
+import 'package:bhawani_tech_task/services/internet_services.dart';
 import 'package:bhawani_tech_task/user_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
+import '../../../services/sqlite_helper.dart';
 import '../model/expense_mode.dart';
 
 part 'dashboard_event.dart';
@@ -63,33 +65,67 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         emit(DashboardLoading());
         ExpenseRepo expenseRepo = ExpenseRepo();
         ReciptImage reciptImage = ReciptImage();
-        String? imageUrl = await reciptImage.uploadImage(event.image);
+        bool online = await isOnline();
+        log('Is online: $online');
+        if (online) {
+          String? imageUrl = await reciptImage.uploadPhotoUsingCloudinary(
+              imageFile: File(event.image.path));
 
-        expenseRepo
-            .addExpense(
-          expense: ExpensModel(
+          log('Image URL: $imageUrl');
+
+          expenseRepo
+              .addExpense(
+            expense: ExpensModel(
+              name: name ?? 'User',
+              userId: uid ?? '',
+              token: fcmToken,
+              title: event.title,
+              description: event.description,
+              amount: event.amount,
+              receiptImage: imageUrl ?? '',
+              status: 'pending',
+              createdAt: Timestamp.now().toDate().millisecondsSinceEpoch,
+              isSynced: true,
+            ),
+          )
+              .then(
+            (value) {
+              Get.offAll(() => HomePage());
+              Fluttertoast.showToast(
+                msg: 'Your expense was sucessfully added.',
+                backgroundColor: Colors.green,
+              );
+            },
+          );
+        } else {
+          // Save the expense to SQLite if the device is offline
+          DatabaseHelper databaseHelper = DatabaseHelper.instance;
+          databaseHelper
+              .insertExpense(ExpensModel(
             name: name ?? 'User',
             userId: uid ?? '',
             token: fcmToken,
             title: event.title,
             description: event.description,
             amount: event.amount,
-            receiptImage: imageUrl ?? '',
+            receiptImage: event.image.path,
             status: 'pending',
-            createdAt: Timestamp.fromDate(DateTime.now()),
-          ),
-        )
-            .then(
-          (value) {
-            Get.offAll(() => HomePage());
-            Fluttertoast.showToast(
-              msg: 'Your expense was sucessfully added.',
-              backgroundColor: Colors.green,
-            );
-          },
-        );
+            createdAt: Timestamp.now().toDate().millisecondsSinceEpoch,
+            isSynced: false,
+          ))
+              .then(
+            (value) {
+              Get.offAll(() => HomePage());
+              Fluttertoast.showToast(
+                msg: 'Your expense was saved locally and will be synced later.',
+                backgroundColor: Colors.orange,
+              );
+            },
+          );
+        }
         emit(DashboardSuccess());
       } catch (e) {
+        log(e.toString());
         Fluttertoast.showToast(
           msg: 'Failed to add expense',
           backgroundColor: Colors.red,

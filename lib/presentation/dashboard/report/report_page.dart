@@ -339,8 +339,10 @@ class _ReportPageState extends State<ReportPage> {
                               DataCell(Text(expense.id ?? '')),
                               DataCell(Text(
                                   expense.name.capitalizeFirst.toString())),
-                              DataCell(Text(DateFormat('yyyy-MM-dd – kk:mm')
-                                  .format(expense.createdAt.toDate()))),
+                              DataCell(Text(DateFormat('yyyy-MM-dd').format(
+                                  expense.timestampCreatedAt.toDate()))),
+                              // DataCell(Text(DateFormat('yyyy-MM-dd – kk:mm')
+                              //     .format(expense.createdAt.toDate()))),
                               DataCell(Text(expense.amount.toString())),
                               DataCell(Text(expense.description)),
                               DataCell(Text(expense.status,

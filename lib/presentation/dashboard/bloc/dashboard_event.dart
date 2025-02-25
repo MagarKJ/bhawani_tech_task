@@ -23,12 +23,14 @@ class FetchExpensesEvent extends DashboardEvent {
   final String? userName;
   final DateTime? startDate;
   final DateTime? endDate;
+  final DocumentSnapshot? lastDocument;
 
   FetchExpensesEvent({
     this.status,
     this.userName,
     this.startDate,
     this.endDate,
+    this.lastDocument,
   });
 }
 

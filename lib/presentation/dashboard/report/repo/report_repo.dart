@@ -167,7 +167,8 @@ class ReportRepository {
                   return [
                     expense.id ?? '',
                     expense.name.capitalizeFirst ?? '',
-                    DateFormat('yyyy-MM-dd').format(expense.createdAt.toDate()),
+                    // DateFormat('yyyy-MM-dd').format(expense.createdAt.toDate()),
+                    DateFormat('yyyy-MM-dd').format(expense.timestampCreatedAt.toDate()),
                     expense.amount.toString(),
                     expense.description,
                     expense.status,

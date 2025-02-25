@@ -193,13 +193,15 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.summarize),
-                title: Text('Report'),
-                onTap: () {
-                  Get.to(() => ReportPage());
-                },
-              ),
+              role == 'admin'
+                  ? ListTile(
+                      leading: Icon(Icons.summarize),
+                      title: Text('Report'),
+                      onTap: () {
+                        Get.to(() => ReportPage());
+                      },
+                    )
+                  : SizedBox.shrink(),
             ],
           ),
         );
@@ -246,138 +248,131 @@ class _HomePageState extends State<HomePage> {
               child: const Icon(Icons.add),
             )
           : SizedBox.shrink(),
-      body: Column(
-        children: [
-          role == 'manager' || role == 'admin'
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        BlocProvider.of<DashboardBloc>(context)
-                            .add(FetchExpensesEvent());
-                      },
-                      child: Text(
-                        'All ',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        BlocProvider.of<DashboardBloc>(context)
-                            .add(FetchExpensesEvent(status: 'pending'));
-                      },
-                      child: Text(
-                        'Pending',
-                        style: TextStyle(
-                          color: Colors.orange,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        BlocProvider.of<DashboardBloc>(context)
-                            .add(FetchExpensesEvent(status: 'approved'));
-                      },
-                      child: Text(
-                        'Approved',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        BlocProvider.of<DashboardBloc>(context)
-                            .add(FetchExpensesEvent(status: 'rejected'));
-                      },
-                      child: Text(
-                        'Rejected',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : SizedBox.shrink(),
-          SizedBox(
-            height: 10,
-          ),
-          BlocBuilder<DashboardBloc, DashboardState>(
-            builder: (context, state) {
-              if (state is DashboardInitial) {
-                BlocProvider.of<DashboardBloc>(context)
-                    .add(FetchExpensesEvent());
-              }
-              if (state is DashboardLoading) {
-                return Center(
-                  child: const CircularProgressIndicator(),
-                );
-              }
-              if (state is DashboardFailure) {
-                return Text(state.errorMessage);
-              }
-              if (state is GetExpenseListSucessState) {
-                return ListView.builder(
-                  itemCount: state.expenses.length,
-                  shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      onTap: () {
-                        Get.to(
-                          () => ExpenseDetailsPage(
-                            expense: state.expenses[index],
-                          ),
-                        );
-                      },
-                      title: Text(
-                        '${state.expenses[index].title} by ${state.expenses[index].name}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: Text(state.expenses[index].status,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            role == 'manager' || role == 'admin'
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          BlocProvider.of<DashboardBloc>(context)
+                              .add(FetchExpensesEvent());
+                        },
+                        child: Text(
+                          'All ',
                           style: TextStyle(
-                              color: state.expenses[index].status == 'pending'
-                                  ? Colors.orange
-                                  : state.expenses[index].status == 'approved'
-                                      ? Colors.green
-                                      : Colors.red)),
-                      trailing: Text(
-                        state.expenses[index].amount.toString(),
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    );
-                  },
+                      GestureDetector(
+                        onTap: () {
+                          BlocProvider.of<DashboardBloc>(context)
+                              .add(FetchExpensesEvent(status: 'pending'));
+                        },
+                        child: Text(
+                          'Pending',
+                          style: TextStyle(
+                            color: Colors.orange,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          BlocProvider.of<DashboardBloc>(context)
+                              .add(FetchExpensesEvent(status: 'approved'));
+                        },
+                        child: Text(
+                          'Approved',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          BlocProvider.of<DashboardBloc>(context)
+                              .add(FetchExpensesEvent(status: 'rejected'));
+                        },
+                        child: Text(
+                          'Rejected',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : SizedBox.shrink(),
+            SizedBox(
+              height: 10,
+            ),
+            BlocBuilder<DashboardBloc, DashboardState>(
+              builder: (context, state) {
+                if (state is DashboardInitial) {
+                  BlocProvider.of<DashboardBloc>(context)
+                      .add(FetchExpensesEvent());
+                }
+                if (state is DashboardLoading) {
+                  return Center(
+                    child: const CircularProgressIndicator(),
+                  );
+                }
+                if (state is DashboardFailure) {
+                  return Text(state.errorMessage);
+                }
+                if (state is GetExpenseListSucessState) {
+                  return ListView.builder(
+                    itemCount: state.expenses.length,
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        onTap: () {
+                          Get.to(
+                            () => ExpenseDetailsPage(
+                              expense: state.expenses[index],
+                            ),
+                          );
+                        },
+                        title: Text(
+                          '${state.expenses[index].title} ${role == 'employee' ? '' : 'by ${state.expenses[index].name}'} ',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(state.expenses[index].status,
+                            style: TextStyle(
+                                color: state.expenses[index].status == 'pending'
+                                    ? Colors.orange
+                                    : state.expenses[index].status == 'approved'
+                                        ? Colors.green
+                                        : Colors.red)),
+                        trailing: Text(
+                          state.expenses[index].amount.toString(),
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+                return const SizedBox(
+                  child: Text('No Expenses'),
                 );
-              }
-              return const SizedBox(
-                child: Text('No Expenses'),
-              );
-            },
-          ),
-          TextButton(
-            onPressed: () async {
-              bool gayo = await SendNotification()
-                  .sendNotification(reciverToken: fcmToken, status: 'accepted');
-
-              log('$gayo');
-            },
-            child: Text('data'),
-          )
-        ],
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

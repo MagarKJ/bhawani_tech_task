@@ -10,7 +10,8 @@ class ExpensModel {
   double amount;
   String receiptImage; // URL or path to the uploaded receipt image
   String status; // expense status (e.g., "pending", "approved", "rejected")
-  Timestamp createdAt; // The timestamp when the expense was created
+  int createdAt; // The timestamp when the expense was created
+  bool isSynced; // Flag to check if the expense is synced with Firestore
 
   ExpensModel({
     this.id,
@@ -23,6 +24,7 @@ class ExpensModel {
     required this.receiptImage,
     required this.status,
     required this.createdAt,
+    this.isSynced = false, // Default value is false
   });
 
   // Convert Expense object to Map for Firestore
@@ -36,7 +38,9 @@ class ExpensModel {
       'amount': amount,
       'receiptImage': receiptImage,
       'status': status,
-      'createdAt': createdAt,
+      'createdAt': Timestamp.fromMillisecondsSinceEpoch(
+          createdAt), // Store as Timestamp,
+      'isSynced': isSynced,
     };
   }
 
@@ -56,7 +60,35 @@ class ExpensModel {
           : data['amount'] ?? 0.0,
       receiptImage: data['receiptImage'] ?? '',
       status: data['status'] ?? 'pending',
-      createdAt: data['createdAt'] ?? Timestamp.now(),
+      createdAt: data['createdAt'] is Timestamp
+          ? (data['createdAt'] as Timestamp).millisecondsSinceEpoch
+          : DateTime.now()
+              .millisecondsSinceEpoch, // Default to current time if missing, // Convert Timestamp to int (milliseconds)
+      isSynced: data['isSynced'] ?? false,
     );
   }
+
+  // Convert SQLite map to Expense object
+  factory ExpensModel.fromMap(Map<String, dynamic> map) {
+    return ExpensModel(
+      id: map['id'], // Assuming SQLite stores the ID as 'id'
+      name: map['name'] ?? '',
+      token: map['token'] ?? '',
+      userId: map['userId'] ?? '',
+      title: map['title'] ?? '',
+      description: map['description'] ?? '',
+      amount: (map['amount'] is int)
+          ? (map['amount'] as int).toDouble()
+          : map['amount'] ?? 0.0,
+      receiptImage: map['receiptImage'] ?? '',
+      status: map['status'] ?? 'pending',
+      createdAt: map['createdAt'] ?? 0,
+      isSynced: map['isSynced'] ==
+          1, // Handle isSynced for SQLite (1 means true, 0 means false)
+    );
+  }
+
+  // Convert Timestamp to DateTime for Firestore
+  Timestamp get timestampCreatedAt =>
+      Timestamp.fromMillisecondsSinceEpoch(createdAt);
 }

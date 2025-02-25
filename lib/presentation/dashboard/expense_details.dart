@@ -169,7 +169,7 @@ class _ExpenseDetailsPageState extends State<ExpenseDetailsPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         DateFormat('yyyy-MM-dd – kk:mm')
-                            .format(widget.expense.createdAt.toDate()),
+                            .format(widget.expense.timestampCreatedAt.toDate()),
                         style: const TextStyle(fontSize: 22),
                       ),
                     ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bhawani_tech_task/presentation/auth/login/bloc/login_bloc.dart';
 import 'package:bhawani_tech_task/presentation/auth/register/bloc/register_bloc.dart';
 import 'package:bhawani_tech_task/presentation/auth/login/login.dart';
@@ -5,7 +7,10 @@ import 'package:bhawani_tech_task/firebase_options.dart';
 import 'package:bhawani_tech_task/presentation/dashboard/bloc/dashboard_bloc.dart';
 import 'package:bhawani_tech_task/presentation/dashboard/report/bloc/report_bloc.dart';
 import 'package:bhawani_tech_task/presentation/notification/bloc/notification_bloc.dart';
+import 'package:bhawani_tech_task/services/internet_services.dart';
 import 'package:bhawani_tech_task/services/notification_serices.dart';
+import 'package:bhawani_tech_task/services/sqlite_helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -22,11 +27,15 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // Enable Firestore persistance to store data locally on device for offline access
+  FirebaseFirestore.instance.settings = Settings(persistenceEnabled: true);
   NotificationSerices notificationSerices = NotificationSerices();
   await notificationSerices.initializeLocalNotification();
   await notificationSerices.getDeviceToken();
   notificationSerices.setupFCMListeners();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  await checkAndSyncExpenses();
 
   runApp(MyApp());
 }
