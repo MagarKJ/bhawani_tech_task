@@ -39,9 +39,9 @@ class _CustomTextFeildState extends State<CustomTextFeild> {
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: TextFormField(
         controller: widget.controller,
-        obscureText: widget.obscureText ? !_isPasswordVisible : false,
+        obscureText: widget.obscureText ? !_isPasswordVisible : false, // to show password or not to show password
         keyboardType: widget.keyboardType,
-        validator: (value) => widget.validator(value),
+        validator: (value) => widget.validator(value), // to validate the input
         onSaved: widget.onSaved,
         maxLines: widget.maxLines,
         decoration: InputDecoration(

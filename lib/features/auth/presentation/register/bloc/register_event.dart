@@ -2,7 +2,7 @@ part of 'register_bloc.dart';
 
 @immutable
 sealed class RegisterEvent {}
-
+// Event to be called when the register button is tapped to register a user
 class RegisterButtonTappedEvent extends RegisterEvent {
   final String email;
   final String password;

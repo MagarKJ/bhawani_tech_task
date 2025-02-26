@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:cloudinary/cloudinary.dart';
 
 class ReciptImage {
-  // Imgur use gareko imit cross vayo re aaba google photos use garna lako
+  // Imgur use gareko imit cross vayo re 
   final String clientId = "9142a9da32949ae";
   Dio dio = Dio();
 
@@ -23,18 +23,21 @@ class ReciptImage {
         ),
       );
       if (response.statusCode == 200) {
-        log(response.data.toString());
+        // log(response.data.toString());
         // saveImageUrlToFirestore(uid, response.data['data']['link']);
         return response.data['data']['link']; // image url
       }
     } catch (e) {
-      log(e.toString());
+      // log(e.toString());
       rethrow;
     }
     return null;
   }
 
+
+// Cloudinary use gareko aaba imagur ko limit cross vayera 
   Future<String?> uploadPhotoUsingCloudinary({required File imageFile}) async {
+    // Cloudinary configuration for image upload 
     final cloudinary = Cloudinary.signedConfig(
       apiKey: '986446797262225',
       apiSecret: 'zEas8k1R6lghFS57FQIaWwy-aSs',
@@ -46,14 +49,15 @@ class ReciptImage {
         file: imageFile.path,
         folder: 'flutter_app_images/',
       );
+      
       if (response.isSuccessful) {
-        log(response.secureUrl.toString());
+        // log(response.secureUrl.toString());
 
         return response.secureUrl;
       }
       return null;
     } catch (e) {
-      log(e.toString());
+      // log(e.toString());
       return null;
     }
   }

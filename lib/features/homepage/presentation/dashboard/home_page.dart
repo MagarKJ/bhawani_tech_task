@@ -3,12 +3,9 @@ import 'dart:developer';
 import 'package:bhawani_tech_task/features/homepage/presentation/dashboard/add_expense_page.dart';
 import 'package:bhawani_tech_task/features/homepage/presentation/dashboard/expense_details.dart';
 import 'package:bhawani_tech_task/features/homepage/presentation/report/report_page.dart';
-import 'package:bhawani_tech_task/features/notification/repo/notification_repo.dart';
-import 'package:bhawani_tech_task/features/notification/repo/notification_serices.dart';
 import 'package:bhawani_tech_task/core/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,11 +25,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    // Fetch expenses data from firestore and store in local storage
     storeUserDataFromLocalStorage();
     BlocProvider.of<DashboardBloc>(context).add(FetchExpensesEvent());
     super.initState();
   }
 
+// function to get user data from local storage
   void storeUserDataFromLocalStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -42,9 +41,10 @@ class _HomePageState extends State<HomePage> {
       uid = prefs.getString('uid') ?? '';
       fcmToken = prefs.getString('playerId') ?? '';
     });
-    log('user id yo ho $uid');
+    // log('user id yo ho $uid');
   }
 
+// function to show dialog box with filter options for expenses list
   void _filterDialogBox() {
     showModalBottomSheet(
       context: context,
@@ -54,6 +54,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // ListTile to show filter options for expenses list
               ListTile(
                 leading: Icon(Icons.clear_all),
                 title: Text('All'),
@@ -81,6 +82,7 @@ class _HomePageState extends State<HomePage> {
                         actions: [
                           TextButton(
                             onPressed: () {
+                              // Fetch expenses data from firestore by name
                               String name = nameController.text.trim();
                               BlocProvider.of<DashboardBloc>(context)
                                   .add(FetchExpensesEvent(userName: name));
@@ -106,6 +108,7 @@ class _HomePageState extends State<HomePage> {
                 leading: Icon(Icons.date_range),
                 title: Text('Filter by Date'),
                 onTap: () {
+                  // Show dialog box with date range picker
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -126,6 +129,7 @@ class _HomePageState extends State<HomePage> {
                                 suffixIcon: IconButton(
                                   icon: Icon(Icons.calendar_today),
                                   onPressed: () async {
+                                    // Show date picker to select start date
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
@@ -148,6 +152,7 @@ class _HomePageState extends State<HomePage> {
                                 suffixIcon: IconButton(
                                   icon: Icon(Icons.calendar_today),
                                   onPressed: () async {
+                                    // Show date picker to select end date
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
@@ -167,6 +172,7 @@ class _HomePageState extends State<HomePage> {
                         actions: [
                           TextButton(
                             onPressed: () {
+                              // Fetch expenses data from firestore by date range
                               DateTime startDate =
                                   DateTime.parse(startDateController.text);
                               DateTime endDate =
@@ -193,6 +199,7 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
+              // ListTile to show report option for admin role
               role == 'admin'
                   ? ListTile(
                       leading: Icon(Icons.summarize),
@@ -248,130 +255,141 @@ class _HomePageState extends State<HomePage> {
               child: const Icon(Icons.add),
             )
           : SizedBox.shrink(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            role == 'manager' || role == 'admin'
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          BlocProvider.of<DashboardBloc>(context)
-                              .add(FetchExpensesEvent());
-                        },
-                        child: Text(
-                          'All ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          BlocProvider.of<DashboardBloc>(context)
-                              .add(FetchExpensesEvent(status: 'pending'));
-                        },
-                        child: Text(
-                          'Pending',
-                          style: TextStyle(
-                            color: Colors.orange,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          BlocProvider.of<DashboardBloc>(context)
-                              .add(FetchExpensesEvent(status: 'approved'));
-                        },
-                        child: Text(
-                          'Approved',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          BlocProvider.of<DashboardBloc>(context)
-                              .add(FetchExpensesEvent(status: 'rejected'));
-                        },
-                        child: Text(
-                          'Rejected',
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                : SizedBox.shrink(),
-            SizedBox(
-              height: 10,
-            ),
-            BlocBuilder<DashboardBloc, DashboardState>(
-              builder: (context, state) {
-                if (state is DashboardInitial) {
-                  BlocProvider.of<DashboardBloc>(context)
-                      .add(FetchExpensesEvent());
-                }
-                if (state is DashboardLoading) {
-                  return Center(
-                    child: const CircularProgressIndicator(),
-                  );
-                }
-                if (state is DashboardFailure) {
-                  return Text(state.errorMessage);
-                }
-                if (state is GetExpenseListSucessState) {
-                  return ListView.builder(
-                    itemCount: state.expenses.length,
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        onTap: () {
-                          Get.to(
-                            () => ExpenseDetailsPage(
-                              expense: state.expenses[index],
-                            ),
-                          );
-                        },
-                        title: Text(
-                          '${state.expenses[index].title} ${role == 'employee' ? '' : 'by ${state.expenses[index].name}'} ',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: Text(state.expenses[index].status,
+      body: RefreshIndicator.adaptive(
+        onRefresh: () async {
+          BlocProvider.of<DashboardBloc>(context).add(FetchExpensesEvent());
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              role == 'manager' || role == 'admin'
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            BlocProvider.of<DashboardBloc>(context)
+                                .add(FetchExpensesEvent());
+                          },
+                          child: Text(
+                            'All ',
                             style: TextStyle(
-                                color: state.expenses[index].status == 'pending'
-                                    ? Colors.orange
-                                    : state.expenses[index].status == 'approved'
-                                        ? Colors.green
-                                        : Colors.red)),
-                        trailing: Text(
-                          state.expenses[index].amount.toString(),
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      );
-                    },
+                        GestureDetector(
+                          onTap: () {
+                            BlocProvider.of<DashboardBloc>(context)
+                                .add(FetchExpensesEvent(status: 'pending'));
+                          },
+                          child: Text(
+                            'Pending',
+                            style: TextStyle(
+                              color: Colors.orange,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            BlocProvider.of<DashboardBloc>(context)
+                                .add(FetchExpensesEvent(status: 'approved'));
+                          },
+                          child: Text(
+                            'Approved',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            BlocProvider.of<DashboardBloc>(context)
+                                .add(FetchExpensesEvent(status: 'rejected'));
+                          },
+                          child: Text(
+                            'Rejected',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : SizedBox.shrink(),
+              SizedBox(
+                height: 10,
+              ),
+              BlocBuilder<DashboardBloc, DashboardState>(
+                builder: (context, state) {
+                  if (state is DashboardInitial) {
+                    BlocProvider.of<DashboardBloc>(context)
+                        .add(FetchExpensesEvent());
+                  }
+                  if (state is DashboardLoading) {
+                    return Center(
+                      child: const CircularProgressIndicator(),
+                    );
+                  }
+                  if (state is DashboardFailure) {
+                    return Text(state.errorMessage);
+                  }
+                  if (state is GetExpenseListSucessState) {
+                    return state.expenses.isEmpty
+                        ? Center(
+                            child: Text('There are No Expenses'),
+                          )
+                        : ListView.builder(
+                            itemCount: state.expenses.length,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                onTap: () {
+                                  Get.to(
+                                    () => ExpenseDetailsPage(
+                                      expense: state.expenses[index],
+                                    ),
+                                  );
+                                },
+                                title: Text(
+                                  '${state.expenses[index].title} ${role == 'employee' ? '' : 'by ${state.expenses[index].name}'} ',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(state.expenses[index].status,
+                                    style: TextStyle(
+                                        color: state.expenses[index].status ==
+                                                'pending'
+                                            ? Colors.orange
+                                            : state.expenses[index].status ==
+                                                    'approved'
+                                                ? Colors.green
+                                                : Colors.red)),
+                                trailing: Text(
+                                  state.expenses[index].amount.toString(),
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                  }
+                  return const SizedBox(
+                    child: Text('No Expenses'),
                   );
-                }
-                return const SizedBox(
-                  child: Text('No Expenses'),
-                );
-              },
-            ),
-          ],
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

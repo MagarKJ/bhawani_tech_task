@@ -18,6 +18,7 @@ class AddReciptButtonPressed extends DashboardEvent {
 }
 
 // Combined event to handle both "GetExpenseListEvent" and "FilterByStatusEvent"
+// This event will be called when the user taps on the "Filter" button
 class FetchExpensesEvent extends DashboardEvent {
   final String? status;
   final String? userName;

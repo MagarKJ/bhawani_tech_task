@@ -6,7 +6,7 @@ sealed class RegisterState {}
 final class RegisterInitialState extends RegisterState {}
 
 final class RegisterLoadingState extends RegisterState {}
-
+// State to be called when registration is successful and user data is returned
 final class RegisterSuccessState extends RegisterState {
   final UserModel user;
 

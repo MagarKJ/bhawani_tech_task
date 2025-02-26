@@ -20,6 +20,7 @@ class _ReportPageState extends State<ReportPage> {
   int noOfRejectedExpenses = 0;
   int noOfPendingExpenses = 0;
 
+// Function to show filter dialog box
   void _filterDialogBox() {
     showModalBottomSheet(
       context: context,
@@ -41,6 +42,7 @@ class _ReportPageState extends State<ReportPage> {
                 leading: Icon(Icons.summarize),
                 title: Text('Filter by Status'),
                 onTap: () {
+                  // Implement filter by status functionality here
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -84,6 +86,7 @@ class _ReportPageState extends State<ReportPage> {
                 leading: Icon(Icons.filter_list),
                 title: Text('Filter by Name'),
                 onTap: () {
+                  // Implement filter by name functionality here
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -123,6 +126,7 @@ class _ReportPageState extends State<ReportPage> {
                 leading: Icon(Icons.date_range),
                 title: Text('Filter by Date'),
                 onTap: () {
+                  // Implement filter by date functionality here
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
@@ -143,6 +147,7 @@ class _ReportPageState extends State<ReportPage> {
                                 suffixIcon: IconButton(
                                   icon: Icon(Icons.calendar_today),
                                   onPressed: () async {
+                                    // Implement date picker functionality here
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
@@ -165,6 +170,7 @@ class _ReportPageState extends State<ReportPage> {
                                 suffixIcon: IconButton(
                                   icon: Icon(Icons.calendar_today),
                                   onPressed: () async {
+                                    // Implement date picker functionality here
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
                                       initialDate: DateTime.now(),
@@ -184,6 +190,7 @@ class _ReportPageState extends State<ReportPage> {
                         actions: [
                           TextButton(
                             onPressed: () {
+                              // Implement filter by date functionality here
                               DateTime startDate =
                                   DateTime.parse(startDateController.text);
                               DateTime endDate =
@@ -214,6 +221,7 @@ class _ReportPageState extends State<ReportPage> {
                 leading: Icon(Icons.today),
                 title: Text('Daily Report'),
                 onTap: () {
+                  // Implement daily report functionality here by calling the FetchReportEvent with filterByCalender as true and calenderFilter as 'day'
                   BlocProvider.of<ReportBloc>(context).add(FetchReportEvent(
                       filterByCalender: true, calenderFilter: 'day'));
                   Navigator.pop(context);
@@ -223,6 +231,7 @@ class _ReportPageState extends State<ReportPage> {
                 leading: Icon(Icons.view_week),
                 title: Text('Weekly Report'),
                 onTap: () {
+                  // Implement weekly report functionality here by calling the FetchReportEvent with filterByCalender as true and calenderFilter as 'week'
                   BlocProvider.of<ReportBloc>(context).add(FetchReportEvent(
                       filterByCalender: true, calenderFilter: 'week'));
                   Navigator.pop(context);
@@ -232,6 +241,7 @@ class _ReportPageState extends State<ReportPage> {
                 leading: Icon(Icons.calendar_month),
                 title: Text('Monthly Report'),
                 onTap: () {
+                  // Implement monthly report functionality here by calling the FetchReportEvent with filterByCalender as true and calenderFilter as 'month'
                   BlocProvider.of<ReportBloc>(context).add(FetchReportEvent(
                       filterByCalender: true, calenderFilter: 'month'));
                   Navigator.pop(context);
@@ -247,7 +257,10 @@ class _ReportPageState extends State<ReportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
             onPressed: () {
@@ -262,120 +275,127 @@ class _ReportPageState extends State<ReportPage> {
           },
           child: Icon(Icons.filter_alt_sharp),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: BlocBuilder<ReportBloc, ReportState>(
-            builder: (context, state) {
-              if (state is ReportInitialState) {
-                BlocProvider.of<ReportBloc>(context).add(FetchReportEvent());
-              }
-              if (state is ReportLoadingState) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (state is ReportFailureState) {
-                return Center(
-                  child: Text(state.errorMessage),
-                );
-              }
-              if (state is ReportSuccessState) {
-                totalExpenses = state.expenses.fold(0.00,
-                    (previousValue, element) => previousValue + element.amount);
-                noOfExpenses = state.expenses.length;
-                noOfApprovedExpenses = state.expenses
-                    .where((element) => element.status == 'approved')
-                    .length;
-                noOfRejectedExpenses = state.expenses
-                    .where((element) => element.status == 'rejected')
-                    .length;
-                noOfPendingExpenses = state.expenses
-                    .where((element) => element.status == 'pending')
-                    .length;
-                return Column(
-                  spacing: 10,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Total Expenses: $totalExpenses',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        )),
-                    Text('No of Expenses: $noOfExpenses',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        )),
-                    Text('No of Pending Expenses: $noOfPendingExpenses',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        )),
-                    Text('No of Approved Expenses: $noOfApprovedExpenses',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        )),
-                    Text('No of Rejected Expenses: $noOfRejectedExpenses',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        )),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: DataTable(
-                        columns: const <DataColumn>[
-                          DataColumn(label: Text('Expense ID')),
-                          DataColumn(label: Text('User Name')),
-                          DataColumn(label: Text('Date')),
-                          DataColumn(label: Text('Amount')),
-                          DataColumn(label: Text('Description')),
-                          DataColumn(label: Text('Status')),
-                        ],
-                        rows: List.generate(state.expenses.length, (index) {
-                          final expense = state.expenses[index];
-                          return DataRow(
-                            cells: <DataCell>[
-                              DataCell(Text(expense.id ?? '')),
-                              DataCell(Text(
-                                  expense.name.capitalizeFirst.toString())),
-                              DataCell(Text(DateFormat('yyyy-MM-dd').format(
-                                  expense.timestampCreatedAt.toDate()))),
-                              // DataCell(Text(DateFormat('yyyy-MM-dd – kk:mm')
-                              //     .format(expense.createdAt.toDate()))),
-                              DataCell(Text(expense.amount.toString())),
-                              DataCell(Text(expense.description)),
-                              DataCell(Text(expense.status,
-                                  style: TextStyle(
-                                      color: expense.status == 'approved'
-                                          ? Colors.green
-                                          : expense.status == 'rejected'
-                                              ? Colors.red
-                                              : Colors.orange))),
-                            ],
-                          );
-                        }),
-                      ),
-                    ),
-                    Center(
-                      child: CustomButton(
-                          buttonText: 'Download Report',
-                          onTap: () {
-                            BlocProvider.of<ReportBloc>(context)
-                                .add(DownloadReportEvent(state.expenses));
-                            BlocProvider.of<ReportBloc>(context)
-                                .add(FetchReportEvent());
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: BlocBuilder<ReportBloc, ReportState>(
+              builder: (context, state) {
+                if (state is ReportInitialState) {
+                  BlocProvider.of<ReportBloc>(context).add(FetchReportEvent());
+                }
+                if (state is ReportLoadingState) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (state is ReportFailureState) {
+                  return Center(
+                    child: Text(state.errorMessage),
+                  );
+                }
+                if (state is ReportSuccessState) {
+                  // Calculate total expenses, no of expenses, no of approved expenses, no of rejected expenses, no of pending expenses
+                  totalExpenses = state.expenses.fold(
+                      0.00,
+                      (previousValue, element) =>
+                          previousValue + element.amount);
+                  noOfExpenses = state.expenses.length;
+                  noOfApprovedExpenses = state.expenses
+                      .where((element) => element.status == 'approved')
+                      .length;
+                  noOfRejectedExpenses = state.expenses
+                      .where((element) => element.status == 'rejected')
+                      .length;
+                  noOfPendingExpenses = state.expenses
+                      .where((element) => element.status == 'pending')
+                      .length;
+                  return Column(
+                    spacing: 10,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Total Expenses: $totalExpenses',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          )),
+                      Text('No of Expenses: $noOfExpenses',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          )),
+                      Text('No of Pending Expenses: $noOfPendingExpenses',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          )),
+                      Text('No of Approved Expenses: $noOfApprovedExpenses',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          )),
+                      Text('No of Rejected Expenses: $noOfRejectedExpenses',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          )),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: DataTable(
+                          columns: const <DataColumn>[
+                            DataColumn(label: Text('Expense ID')),
+                            DataColumn(label: Text('User Name')),
+                            DataColumn(label: Text('Date')),
+                            DataColumn(label: Text('Amount')),
+                            DataColumn(label: Text('Description')),
+                            DataColumn(label: Text('Status')),
+                          ],
+                          rows: List.generate(state.expenses.length, (index) {
+                            final expense = state.expenses[index];
+                            return DataRow(
+                              cells: <DataCell>[
+                                DataCell(Text(expense.id ?? '')),
+                                DataCell(Text(
+                                    expense.name.capitalizeFirst.toString())),
+                                DataCell(Text(DateFormat('yyyy-MM-dd').format(
+                                    expense.timestampCreatedAt.toDate()))),
+                                // DataCell(Text(DateFormat('yyyy-MM-dd – kk:mm')
+                                //     .format(expense.createdAt.toDate()))),
+                                DataCell(Text(expense.amount.toString())),
+                                DataCell(Text(expense.description)),
+                                DataCell(Text(expense.status,
+                                    style: TextStyle(
+                                        color: expense.status == 'approved'
+                                            ? Colors.green
+                                            : expense.status == 'rejected'
+                                                ? Colors.red
+                                                : Colors.orange))),
+                              ],
+                            );
                           }),
-                    ),
-                  ],
+                        ),
+                      ),
+                      Center(
+                        child: CustomButton(
+                            buttonText: 'Download Report',
+                            onTap: () {
+                              // Implement download report functionality here
+                              BlocProvider.of<ReportBloc>(context)
+                                  .add(DownloadReportEvent(state.expenses));
+                              // CALLed fetch report event to get the latest data ani kina vane screen blank bathyo
+                              BlocProvider.of<ReportBloc>(context)
+                                  .add(FetchReportEvent());
+                            }),
+                      ),
+                    ],
+                  );
+                }
+                return SizedBox(
+                  child: Center(
+                    child: Text('No data found'),
+                  ),
                 );
-              }
-              return SizedBox(
-                child: Center(
-                  child: Text('No data found'),
-                ),
-              );
-            },
+              },
+            ),
           ),
         ));
   }

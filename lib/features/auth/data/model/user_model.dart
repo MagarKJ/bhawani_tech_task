@@ -1,8 +1,9 @@
+// this is the model class for the user data that is fetched from the firestore and used throughout the app
 class UserModel {
   final String uid;
   final String email;
   final String name;
-  final String role;
+  final String role; // role of the user (admin, manager, employee.)
 
   UserModel({
     required this.uid,

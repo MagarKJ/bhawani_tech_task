@@ -9,18 +9,21 @@ part 'report_state.dart';
 
 class ReportBloc extends Bloc<ReportEvent, ReportState> {
   ReportBloc() : super(ReportInitialState()) {
+    // FetchReportEvent to fetch expenses based on user role and apply filters if available (status, date, etc.)
     on<FetchReportEvent>((event, emit) async {
       try {
         emit(ReportLoadingState());
         ReportRepository reportRepository = ReportRepository();
         List<ExpensModel> expenses = [];
         event.filterByCalender == false
+        // Fetch expenses based on user role and apply filters if available (status, date, etc.)
             ? expenses = await reportRepository.getAdminReport(
                 statusFilter: event.status ?? '',
                 userNameFilter: event.userName ?? '',
                 startDate: event.startDate,
                 endDate: event.endDate,
               )
+              
             : expenses = await reportRepository.getReportByCalender(
                 dateFilter: event.calenderFilter ?? '',
               );
@@ -34,6 +37,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
       try {
         emit(ReportDownloadInProgressState());
         ReportRepository reportRepository = ReportRepository();
+        // Generate PDF report based on the fetched expenses
         reportRepository.generateReportPDF(event.expenses);
 
         emit(ReportDownloadSuccessState());

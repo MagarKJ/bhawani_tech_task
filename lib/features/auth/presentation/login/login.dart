@@ -35,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+// function to check if the user is logged in or not and navigate to home page if logged in already on app start
   void _navigation() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('login') ?? false;
@@ -108,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     onSaved: (value) {
-                      log(value.toString());
+                      // log(value.toString());
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -126,11 +127,13 @@ class _LoginPageState extends State<LoginPage> {
                     keyboardType: TextInputType.visiblePassword,
                     obscureText: true,
                     onSaved: (value) {
-                      log(value.toString());
+                      // log(value.toString());
                     },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your password';
+                      } else if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
                       }
                       return null;
                     },
@@ -144,8 +147,11 @@ class _LoginPageState extends State<LoginPage> {
                       return CustomButton(
                         buttonText: 'Log In',
                         onTap: () async {
+                          // Validate the form and save the form data if the form is valid
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
+                            // Call the login function from the bloc to login the user with email and password
+                            // and navigate to home page after successful login
                             BlocProvider.of<LoginBloc>(context).add(
                               LoginButtonTappedEvent(
                                 email: emailController.text,

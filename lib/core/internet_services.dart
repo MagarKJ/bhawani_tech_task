@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:bhawani_tech_task/features/homepage/data/model/expense_mode.dart';
@@ -9,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../features/homepage/data/repo/expense_repod.dart';
 
+// Function to check if the device is online or not
 Future<bool> isOnline() async {
   try {
     final result = await InternetAddress.lookup('example.com');
@@ -22,9 +24,13 @@ Future<bool> isOnline() async {
   return connectivityResult != ConnectivityResult.none;
 }
 
+// Function to check and sync expenses to Firestore
+
 Future<void> checkAndSyncExpenses() async {
   // First, check if the device is online
+
   bool online = await isOnline();
+  log('Device is online: $online');
 
   if (online) {
     // Fetch unsynced expenses from local database
@@ -37,7 +43,8 @@ Future<void> checkAndSyncExpenses() async {
       try {
         // Upload the receipt image if it exists (you may already have a path)
         String? imageUrl = expense.receiptImage.isNotEmpty
-            ? await ReciptImage().uploadImage(File(expense.receiptImage))
+            ? await ReciptImage().uploadPhotoUsingCloudinary(
+                imageFile: File(expense.receiptImage))
             : null;
 
         // Update the expense with the image URL and mark it as synced
@@ -56,6 +63,7 @@ Future<void> checkAndSyncExpenses() async {
           backgroundColor: Colors.green,
         );
       } catch (e) {
+        log('Failed to sync expense: ${e.toString()}');
         // Handle error if sync fails
         Fluttertoast.showToast(
           msg: 'Failed to sync expense: ${e.toString()}',
@@ -65,6 +73,7 @@ Future<void> checkAndSyncExpenses() async {
     }
   } else {
     // Notify the user that the device is offline
+    log('Device is offline, please check your connection.');
     Fluttertoast.showToast(
       msg: 'Device is offline, please check your connection.',
       backgroundColor: Colors.red,

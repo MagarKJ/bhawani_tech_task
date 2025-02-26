@@ -18,9 +18,9 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap, // function to be called when the button is pressed
       child: Container(
-        width: width ?? Get.width * 0.8,
+        width: width ?? Get.width * 0.8, // width of the button (default is 80% of the screen width)
         alignment: Alignment.center,
         height: Get.height * 0.06,
         decoration: BoxDecoration(

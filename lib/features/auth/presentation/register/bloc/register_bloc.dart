@@ -15,12 +15,14 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       UserAuthRepo userAuthRepo = UserAuthRepo();
       emit(RegisterLoadingState());
       try {
+        // Register user with email, password, name and role and return user data
         UserModel user = await userAuthRepo.register(
           email: event.email,
           password: event.password,
           name: event.name,
           role: event.role,
         );
+        // Navigate to login page after successful registration and show success message
         Get.to(() => LoginPage());
         Fluttertoast.showToast(
           msg: 'Register Success',

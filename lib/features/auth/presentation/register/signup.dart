@@ -26,6 +26,14 @@ class _RegisterState extends State<Register> {
   File? selectedImage;
 
   @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -71,8 +79,11 @@ class _RegisterState extends State<Register> {
                   return CustomButton(
                     buttonText: 'Register',
                     onTap: () async {
+                      // Validate the form and save the data if the form is valid
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
+                        // Add the RegisterButtonTappedEvent to the RegisterBloc with the email, password, name and role as parameters
+                        // This will trigger the RegisterButtonTappedEvent and call the on<RegisterButtonTappedEvent> method in the RegisterBloc
                         BlocProvider.of<RegisterBloc>(context).add(
                           RegisterButtonTappedEvent(
                             email: emailController.text,
@@ -137,7 +148,7 @@ class _RegisterState extends State<Register> {
               return null;
             },
             onSaved: (value) {
-              log(value.toString());
+              // log(value.toString());
             },
           ),
           CustomTextFeild(
@@ -153,7 +164,7 @@ class _RegisterState extends State<Register> {
               return null;
             },
             onSaved: (value) {
-              log(value.toString());
+              // log(value.toString());
             },
           ),
           Padding(
@@ -186,11 +197,13 @@ class _RegisterState extends State<Register> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter your password';
+              } else if (value.length < 6) {
+                return 'Password must be at least 6 characters long';
               }
               return null;
             },
             onSaved: (value) {
-              log(value.toString());
+              // log(value.toString());
             },
           ),
         ],

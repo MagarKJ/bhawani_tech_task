@@ -5,6 +5,8 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 
+
+// DatabaseHelper class to handle SQLite database operations like insert, update, delete, etc.
 class DatabaseHelper {
   static Database? _database;
 
@@ -12,13 +14,15 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
   DatabaseHelper._privateConstructor();
 
+
+// Get the database instance (create if not exists)
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
-  // Initialize the database
+  // Initialize the database with the schema
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), 'expense_database.db');
     return openDatabase(
@@ -43,6 +47,7 @@ class DatabaseHelper {
           ''',
         );
       },
+      // new table because of schema change in version 3
       version: 3, // Increment version for database migration
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < newVersion) {
@@ -130,14 +135,14 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
-    log('Expense deleted successfully');
+    // log('Expense deleted successfully');
   }
 
   // Delete the database
   Future<void> deleteDatabase() async {
     String path = join(await getDatabasesPath(), 'expense_database.db');
     await databaseFactory.deleteDatabase(path);
-    log('Database deleted successfully');
+    // log('Database deleted successfully');
   }
 
   // Fetch unsynced expenses from the SQLite database

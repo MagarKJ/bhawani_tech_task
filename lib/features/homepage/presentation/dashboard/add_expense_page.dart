@@ -5,16 +5,12 @@ import 'package:bhawani_tech_task/core/custom_widgets/custom_buttons.dart';
 import 'package:bhawani_tech_task/core/custom_widgets/custom_text_feild.dart';
 import 'package:bhawani_tech_task/features/homepage/presentation/dashboard/bloc/dashboard_bloc.dart';
 import 'package:bhawani_tech_task/features/homepage/presentation/dashboard/home_page.dart';
-import 'package:bhawani_tech_task/features/homepage/data/model/expense_mode.dart';
-import 'package:bhawani_tech_task/features/notification/repo/sqlite_helper.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder, BlocProvider;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../core/internet_services.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({super.key});
@@ -38,6 +34,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     setState(() {
       _receiptImage = image;
     });
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _amountController.dispose();
+    super.dispose();
   }
 
   @override
@@ -75,7 +79,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      log(value.toString());
+                      // log(value.toString());
                     }),
 
                 // Amount field
@@ -90,7 +94,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      log(value.toString());
+                      // log(value.toString());
                     }),
                 // Description field
                 CustomTextFeild(
@@ -104,7 +108,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      log(value.toString());
+                      // log(value.toString());
                     }),
 
                 // Receipt image upload
@@ -135,13 +139,16 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                           'Submit'), // Add a Key to the button widget for testing
                       buttonText: 'Submit',
                       onTap: () {
+                        // Validate the form and save the form data if the form is valid
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
                           _receiptImage == null
+                              //  Check if the receipt image is selected or not before adding the expense
                               ? Fluttertoast.showToast(
                                   msg: 'Please select a receipt image',
                                   backgroundColor: Colors.orange,
                                 )
+                              // Add the AddReciptButtonPressed event to the DashboardBloc with the title, description, amount and image as parameters
                               : BlocProvider.of<DashboardBloc>(context).add(
                                   AddReciptButtonPressed(
                                     title: _titleController.text,
@@ -156,32 +163,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     );
                   },
                 ),
-                TextButton(
-                    onPressed: () async {
-                      bool online = await isOnline();
-                      log('Device is online: $online');
-
-                      // DatabaseHelper databaseHelper = DatabaseHelper.instance;
-                      // databaseHelper.deleteDatabase();
-                      // databaseHelper.getExpenses().then((value) {
-                      //   // Iterate through the list of expenses
-                      //   for (var expense in value) {
-                      //     // Log each field of the expense
-                      //     log('Expense ID: ${expense.id}');
-                      //     log('Expense Name: ${expense.name}');
-                      //     log('Expense Token: ${expense.token}');
-                      //     log('Expense UserID: ${expense.userId}');
-                      //     log('Expense Title: ${expense.title}');
-                      //     log('Expense Description: ${expense.description}');
-                      //     log('Expense Amount: ${expense.amount}');
-                      //     log('Expense Receipt Image: ${expense.receiptImage}');
-                      //     log('Expense Status: ${expense.status}');
-                      //     log('Expense CreatedAt: ${expense.createdAt}');
-                      //     log('Expense isSynced: ${expense.isSynced}');
-                      //   }
-                      // });
-                    },
-                    child: Text('get Expense')),
               ],
             ),
           ),

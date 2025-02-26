@@ -15,12 +15,16 @@ final class DashboardFailure extends DashboardState {
   DashboardFailure({required this.errorMessage});
 }
 
+
+// Combined state to handle both "GetExpenseListSucessState" and "FilteredExpenseListSucessState"
+// This state will be called when the user taps on the "Filter" button
 final class GetExpenseListSucessState extends DashboardState {
   final List<ExpensModel> expenses;
 
   GetExpenseListSucessState({required this.expenses});
 }
 
+// Combined state to handle both "GetExpenseListSucessState" and "FilteredExpenseListSucessState"
 final class FilteredExpenseListSucessState extends DashboardState {
   final List<ExpensModel> expenses;
 

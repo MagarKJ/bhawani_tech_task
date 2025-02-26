@@ -11,33 +11,41 @@ class NotificationSerices {
   static final FlutterLocalNotificationsPlugin
       _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
+
+      // Function to get device token for push notifications and store it in shared preferences
+
   Future<void> getDeviceToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     fcmToken = await messaging.getToken();
-    log('FCMtoken: $fcmToken');
+    // log('FCMtoken: $fcmToken');
 
     if (fcmToken != null) {
       prefs.setString('playerId', fcmToken!);
     }
   }
 
+
+// Function to initialize local notification service with default options
   Future<void> initializeLocalNotification() async {
+    // Initialize local notification service with default options for android
     var androidInitializationSettings = const AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
+    
     var initializationSettings = InitializationSettings(
       android: androidInitializationSettings,
     );
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
+        // Function to handle notification response when user taps on notification
             (NotificationResponse notificationResponse) {
       String? payload = notificationResponse.payload;
-      log('payload:$payload');
+      // log('payload:$payload');
       if (payload != null) {
         // Convert payload to map
         Map<String, dynamic> data = jsonDecode(payload);
-        log('Parsed payload data: $data');
+        // log('Parsed payload data: $data');
 
         // Create a dummy RemoteMessage for handling
         RemoteMessage message = RemoteMessage(data: data);
@@ -46,6 +54,9 @@ class NotificationSerices {
       }
     });
   }
+
+
+  // Function to setup Firebase Cloud Messaging (FCM) listeners for foreground messages
 
   void setupFCMListeners() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
@@ -56,6 +67,8 @@ class NotificationSerices {
       }
     });
   }
+
+  // Function to show notification using Flutter Local Notifications plugin with the message data
 
   Future<void> _showNotification(
       FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin,
@@ -69,9 +82,13 @@ class NotificationSerices {
       ticker: 'ticker',
     );
 
+
+// Create a notification with the message data and show it
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
+
+// Show the notification with the message data
     await flutterLocalNotificationsPlugin.show(
       0,
       message.notification?.title,

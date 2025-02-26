@@ -8,6 +8,7 @@ part 'notification_state.dart';
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc() : super(NotificationInitialState()) {
+    // StatusChangeEvent to send notification to the user based on the status
     on<StatusChangeEvent>((event, emit) {
       try {
         emit(NotificationLoadingState());

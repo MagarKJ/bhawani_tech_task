@@ -7,6 +7,7 @@ final class ReportInitialState extends ReportState {}
 
 final class ReportLoadingState extends ReportState {}
 
+
 final class ReportSuccessState extends ReportState {
   final List<ExpensModel> expenses;
 

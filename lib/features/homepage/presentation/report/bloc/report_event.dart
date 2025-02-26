@@ -3,6 +3,8 @@ part of 'report_bloc.dart';
 @immutable
 sealed class ReportEvent {}
 
+
+// Event to be called when the user taps on the "Download" button
 class FetchReportEvent extends ReportEvent {
   final String? status;
   final String? userName;

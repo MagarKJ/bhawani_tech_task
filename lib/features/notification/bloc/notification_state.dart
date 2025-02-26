@@ -7,6 +7,8 @@ final class NotificationInitialState extends NotificationState {}
 
 final class NotificationLoadingState extends NotificationState {}
 
+
+// State to be called when notification is successful
 final class NotificationSuccessState extends NotificationState {
   final String message;
 

@@ -13,6 +13,8 @@ import 'package:printing/printing.dart';
 class ReportRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+// Function to fetch expenses from Firestore based on user ID, status, date range, etc. (with optional filters)
+// this is used in the report page to get the expenses based on the filters
   Future<List<ExpensModel>> getAdminReport({
     String statusFilter = '',
     String userNameFilter = '',
@@ -189,7 +191,7 @@ class ReportRepository {
         backgroundColor: Colors.green,
       );
     } catch (e) {
-      log('Failed to generate PDF: $e');
+      // log('Failed to generate PDF: $e');
       Fluttertoast.showToast(
         msg: 'Failed to generate PDF report',
         backgroundColor: Colors.red,

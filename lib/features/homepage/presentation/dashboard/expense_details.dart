@@ -41,6 +41,7 @@ class _ExpenseDetailsPageState extends State<ExpenseDetailsPage> {
         child: Column(
           spacing: 10,
           children: [
+            // Table to show the details of the expense in a tabular format for better readability
             Table(
               border: TableBorder.all(
                 color: Colors.black,
@@ -168,6 +169,7 @@ class _ExpenseDetailsPageState extends State<ExpenseDetailsPage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
+                        // firebase timestamp to date conversion using intl package to format the date
                         DateFormat('yyyy-MM-dd – kk:mm')
                             .format(widget.expense.timestampCreatedAt.toDate()),
                         style: const TextStyle(fontSize: 22),
@@ -187,6 +189,7 @@ class _ExpenseDetailsPageState extends State<ExpenseDetailsPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
+                      // Image.network to display the image from the URL stored in Firestore but stored in cloud storage
                       child: Image.network(
                         widget.expense.receiptImage,
                         height: 100,
@@ -209,6 +212,8 @@ class _ExpenseDetailsPageState extends State<ExpenseDetailsPage> {
             SizedBox(
               height: 10,
             ),
+
+            // Buttons to approve, reject or mark the expense as pending only if the user is a manager
             role == 'manager'
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -219,6 +224,7 @@ class _ExpenseDetailsPageState extends State<ExpenseDetailsPage> {
                               width: Get.width * 0.3,
                               color: Colors.green,
                               onTap: () {
+                                // Add the UpdateExpenseStatus event to the DashboardBloc to update the status of the expense
                                 BlocProvider.of<DashboardBloc>(context).add(
                                   UpdateExpenseStatus(
                                     expenseId: widget.expense.id ?? '',

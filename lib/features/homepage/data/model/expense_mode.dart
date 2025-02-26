@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
+// Expense model class to store expense data and convert to/from Firestore, SQLite and JSON format
 class ExpensModel {
   String? id; // Document ID in Firestore (optional)
   String name;

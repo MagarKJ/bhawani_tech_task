@@ -21,11 +21,13 @@ part 'dashboard_state.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   DashboardBloc() : super(DashboardInitial()) {
+    // FetchExpensesEvent to fetch expenses based on user role and apply filters if available (status, date, etc.)
     on<FetchExpensesEvent>((event, emit) async {
       try {
         emit(DashboardLoading());
         ExpenseRepo expenseRepo = ExpenseRepo();
         List<ExpensModel> expenses = [];
+        // Fetch expenses based on user role and apply filters if available (status, date, etc.)
 
         if (role == 'employee') {
           // Regular users: Only fetch their own expenses
@@ -50,28 +52,34 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
             endDate: event.endDate, // Optional date filter
           );
         }
+        
 
         await Future.delayed(Duration(seconds: 1)); // Simulate delay for UX
-        log('Expenses fetched successfully: $expenses');
+        // log('Expenses fetched successfully: $expenses');
         emit(GetExpenseListSucessState(expenses: expenses));
       } catch (e) {
-        log(e.toString());
+        // log(e.toString());
         emit(DashboardFailure(errorMessage: e.toString()));
       }
     });
-
+// AddReciptButtonPressed event to add a new expense with the provided details and image
     on<AddReciptButtonPressed>((event, emit) async {
       try {
         emit(DashboardLoading());
         ExpenseRepo expenseRepo = ExpenseRepo();
         ReciptImage reciptImage = ReciptImage();
+        // Check if the device is online
         bool online = await isOnline();
-        log('Is online: $online');
+        // log('Is online: $online');
         if (online) {
+          // Upload the receipt image to Cloudinary and get the image URL
+
           String? imageUrl = await reciptImage.uploadPhotoUsingCloudinary(
               imageFile: File(event.image.path));
 
-          log('Image URL: $imageUrl');
+          // log('Image URL: $imageUrl');
+          // Add the expense to Firestore
+        
 
           expenseRepo
               .addExpense(
@@ -125,7 +133,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         }
         emit(DashboardSuccess());
       } catch (e) {
-        log(e.toString());
+        // log(e.toString());
         Fluttertoast.showToast(
           msg: 'Failed to add expense',
           backgroundColor: Colors.red,
@@ -134,6 +142,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       }
     });
 
+  
+// updateExpenseStatus event to update the status of an expense (e.g., approve, reject, pending)
     on<UpdateExpenseStatus>((event, emit) async {
       try {
         emit(DashboardLoading());
